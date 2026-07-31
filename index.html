@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get the VoltPoint app</title>
+    <!-- Redirect endpoint for the download QR code — not a page to index. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" />
+    <!--
+      Plain static HTML on purpose, NOT a React route:
+        - it is served as a real file, so it needs no SPA history fallback;
+        - it redirects before the app bundle is fetched, so a scan lands in the
+          store in one hop instead of booting the whole site first.
+      Store URLs are mirrored from src/data/stores.ts — update both together.
+    -->
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #0a0510;
+        color: #f5f3f7;
+        font-family:
+          'Manrope',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        text-align: center;
+      }
+      .card {
+        max-width: 340px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+      p {
+        margin: 0 0 24px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: rgba(245, 243, 247, 0.62);
+      }
+      p[lang='ar'] {
+        direction: rtl;
+      }
+      a {
+        display: block;
+        margin: 10px 0;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .ios {
+        background: #ffffff;
+        color: #0a0510;
+      }
+      .android {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.05);
+        color: #f5f3f7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>VoltPoint</h1>
+      <p>
+        Opening your app store&hellip;
+        <br />
+        <span lang="ar">جارٍ فتح متجر التطبيقات&hellip;</span>
+      </p>
+      <!--
+        Rendered immediately rather than hidden behind <noscript>: it is the
+        landing state for anyone the sniff below cannot place (desktop, an
+        unknown UA, a blocked redirect) and the fallback when JS is off.
+      -->
+      <a class="ios" href="https://apps.apple.com/us/app/volthub-evcharging/id6740396664"
+        >Download on the App Store</a
+      >
+      <a class="android" href="https://play.google.com/store/apps/details?id=com.anrim.voltpoint"
+        >Get it on Google Play</a
+      >
+    </div>
+
+    <script>
+      (function () {
+        var ua = navigator.userAgent || '';
+        var IOS = 'https://apps.apple.com/us/app/volthub-evcharging/id6740396664';
+        var ANDROID = 'https://play.google.com/store/apps/details?id=com.anrim.voltpoint';
+
+        /* Android is checked first: some Android UAs also carry "Linux", and a
+           handful of in-app browsers append "like iPhone" strings. */
+        if (/android/i.test(ua)) {
+          location.replace(ANDROID);
+          return;
+        }
+
+        /* iPadOS 13+ reports a desktop Safari UA, so iPads are only detectable
+           as "Macintosh" + a real touchscreen. */
+        var iPadOS = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+        if (/iPhone|iPad|iPod/i.test(ua) || iPadOS) {
+          location.replace(IOS);
+          return;
+        }
+
+        /* Desktop and anything unrecognised: leave the two buttons on screen
+           rather than guessing a store the visitor cannot install from. */
+      })();
+    </script>
+  </body>
+</html>
